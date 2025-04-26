@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Scraper E-commerce</title>
+</head>
+<body>
+    <h1>Scraper un site e-commerce</h1>
+    <input type="text" id="urlInput" placeholder="Colle une URL ici" />
+    <button onclick="scrape()">Scraper</button>
+    <div id="results"></div>
+
+    <script>
+        function scrape() {
+            const url = document.getElementById('urlInput').value;
+            fetch('/scrape', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ url })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const results = document.getElementById('results');
+                results.innerHTML = '';
+                if (data.error) {
+                    results.innerHTML = `<p style="color:red;">Erreur : ${data.error}</p>`;
+                    return;
+                }
+                data.forEach(item => {
+                    results.innerHTML += `
+                        <div>
+                            <img src="${item.image}" width="100" />
+                            <h3>${item.title}</h3>
+                            <p>${item.price}</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
